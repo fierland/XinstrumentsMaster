@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="XpUDP">
+    <Position X="0.5" Y="0.5" Width="2" />
+    <NestedTypes>
+      <Typedef Name="XpUDP::xchr" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>XpUDP.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Typedef>
+      <Struct Name="XpUDP::_Xp_becn_struct" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>XpUDP.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Struct Name="XpUDP::_dref_struct" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>XpUDP.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Typedef Name="XpUDP::xflt" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>XpUDP.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Typedef>
+      <Enum Name="XpUDP::__unnamed_enum_006d_1" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>XpUDP.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+      <Struct Name="XpUDP::_data_struct" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>XpUDP.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Struct Name="XpUDP::_dref_struct_out" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>XpUDP.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Struct Name="XpUDP::_Xp_dref_struct_in" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>XpUDP.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Typedef Name="XpUDP::XpErrorCode" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>XpUDP.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Typedef>
+      <Typedef Name="XpUDP::xdob" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>XpUDP.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Typedef>
+      <Typedef Name="XpUDP::xint" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>XpUDP.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Typedef>
+      <Struct Name="XpUDP::_DataRefs" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>XpUDP.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>ACgAQGAAAAAAAChwgJgACBBAAAAEAAQgAAAQAQAAAAQ=</HashCode>
+      <FileName>XpUDP.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
