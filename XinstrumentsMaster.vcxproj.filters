@@ -156,12 +156,6 @@
     <ClInclude Include="mydebug.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="XpUDP.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="XPUtils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\hardware\espressif\esp32\cores\esp32\base64.cpp">
@@ -202,12 +196,6 @@
     </ClCompile>
     <ClCompile Include="..\hardware\espressif\esp32\cores\esp32\WString.cpp">
       <Filter>Source Files\_micro-api-readonly\core</Filter>
-    </ClCompile>
-    <ClCompile Include="XpUDP.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="XPUtils.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

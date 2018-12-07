@@ -16,6 +16,7 @@
  Author:	Frank
 */
 
+#include <stdlib.h>
 #include <QList.h>
 #include <esp32_can.h>
 #include "XinstrumentsMaster.h"
@@ -48,62 +49,62 @@ long sendVal = 10;  // test only
 long timerVal = DEB_TM_STEP; // testonly;
 
 //-------------------------------------------------------------------------------------------------
-//
+// send changed state XPLane interface to instruments
 //-------------------------------------------------------------------------------------------------
-void XPsetStateCallback(bool isRunning)
+void XpSendState2Canbus(bool isRunning)
 {
-	// TODO: code state callback from xplane
+	myCANbus->setExternalBusState(isRunning);
 }
 
 //-------------------------------------------------------------------------------------------------
-//
+//  send changed state
 //-------------------------------------------------------------------------------------------------
-int XPsetParamValue(canbusId_t canId, float value)
+int CANASsendChangedControlValue2XP(canbusId_t canId, float value)
 {
- DPRINTINFO("START");
+	DLPRINTINFO(2, "START");
 	myXpInterface->setDataRefValue(canId, value);
- DPRINTINFO("STOP");
- return 0;
+	DLPRINTINFO(2, "STOP");
+	return 0;
 }
 //-------------------------------------------------------------------------------------------------
+// set changed state of a parameter to CanBus
 //-------------------------------------------------------------------------------------------------
-void xpCallBackFunction(uint16_t canId, float val)
+void XpSendChangedParam2Canbus(uint16_t canId, float val)
 {
 	int service_code = 0;
 
-	DPRINTINFO("START");
+	DLPRINTINFO(2, "START");
 
-  DPRINT("CanID:");DPRINT(canId);DPRINT(" :value:");DPRINTLN(val);
+	DLVARPRINT(1, "CanID:", canId); DLVARPRINTLN(1, " :value:", val);
 
 	myCANbus->ParamUpdateValue(canId, val);
 
-	DPRINTINFO("STOP");
+	DLPRINTINFO(2, "STOP");
 }
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-int callbackNewXitem(uint16_t canID)
+int CANASrequestNewXitem(uint16_t canID)
 {
-	DPRINTINFO("START");
-	CanasXplaneTrans* foundItem;
+	DLPRINTINFO(2, "START/STOP");
+
+	//CanasXplaneTrans* foundItem;
 	// check if item exist
-	foundItem = Can2XPlane::fromCan2XplaneElement(canID);
+	//foundItem = Can2XPlane::fromCan2XplaneElement(canID);
 
-	if (foundItem->canasId == 0)
-		return -1;
+	//if (foundItem->canasId == 0)
+	//	return -1;
 
-	myXpInterface->registerDataRef(5, foundItem);
-
-	DPRINTINFO("STOP");
-	return 0;
+	return myXpInterface->registerDataRef((uint16_t)canID);
 };
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
-int callbackRemoveXitem(uint16_t canID)
+int CANASremoveXitem(uint16_t canID)
 {
-	DPRINTINFO("START");
+	DLPRINTINFO(2, "START");
 
 	return myXpInterface->unRegisterDataRef(canID);
-	DPRINTINFO("STOP");
+
+	DLPRINTINFO(2, "STOP");
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -119,57 +120,56 @@ void setup()
 		//TODO: Store wifi details in perm memory
 		//TODO: use wifi  autosetup for first connect
 		  // Connect to WiFi network
-	DPRINTINFO("START");
-	DPRINTLN();
-	DPRINT("Connecting to ");
-	DPRINTLN(ssid);
+	DLPRINTINFO(2, "START");
+
+	DLVARPRINTLN(1, "Connecting to ", ssid);
 
 	WiFi.begin(ssid, password);
 
 	while (WiFi.status() != WL_CONNECTED)
 	{
 		delay(500);
-		DPRINT(".");
+		DLPRINT(1, ".");
 	};
-	DPRINTLN("<");
-	DPRINTLN("WiFi connected");
+	DLPRINTLN(1, "<");
+
 	// Print the IP address
 	ipOwn = WiFi.localIP();
-	DPRINTLN(WiFi.localIP());
+	DLVARPRINTLN(1, "WiFi connected:", WiFi.localIP());
 
-	DPRINTLN("creating XPlane interface");
-	myXpInterface = new XpUDP(xpCallBackFunction, XPsetStateCallback);
-  DPRINTLN("starting");
-	myXpInterface->start();
+	DLPRINTLN(1, "creating XPlane interface");
+	myXpInterface = new XpUDP(XpSendChangedParam2Canbus, XpSendState2Canbus);
 
-	// startup the CAN areospace bus
-	DPRINTLN("starting Can Bus interface");
+	DLPRINTLN(1, "Creating Can Bus interface");
 	myCANbus = new ICanBus(XI_Instrument_NodeID, XI_Hardware_Revision, XI_Software_Revision);
 	assert(myCANbus != NULL);
 
-	DPRINTLN("starting CanAs interface");
+	DLPRINTLN(1, "starting xp interface");
+	myXpInterface->start();
+
+	// startup the CAN areospace bus
+
+	DLPRINTLN(1, "starting CanAs interface");
 	// make sure right can pins for board aree set
 	myCANbus->setCANPins(XI_CANBUS_RX, XI_CANBUS_TX);
+	// as we are master we will listen to serviceRequestdata;
+	myCANbus->ServiceRegister_master(CANASrequestNewXitem, CANASremoveXitem, CANASsendChangedControlValue2XP);
 	myCANbus->start(XI_CANBUS_SPEED);
 
-	// as we are master we will listen to serviceRequestdata;
-	myCANbus->ServiceRegister_master(callbackNewXitem, callbackRemoveXitem, XPsetParamValue);
-
-	DPRINTINFO("STOP");
+	DLPRINTINFO(2, "STOP");
 }
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
 // the loop function runs over and over again until power down or reset
 void loop()
 {
-	//myXpInterface->dataReader();
+	int res;
 
-	if (millis() > timerVal)
+	myXpInterface->dataReader();
+
+	res = myCANbus->UpdateMaster();
+	if (res != 0)
 	{
-		xpCallBackFunction(668, sendVal++);
-		DPRINTLN("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$UPDATING VALUE");
-		timerVal += DEB_TM_STEP;
+		DLVARPRINTLN(0, "Error update Canbus:", res);
 	}
-
-	myCANbus->Update();
 };

@@ -13,7 +13,32 @@
 
 #define NO_DEBUG 0
 #define MACRO_DEBUG  //If you comment this line, the DPRINT & DPRINTLN lines are defined as blank.
-//#define MACRO_DEBUG_DETAIL //If you comment this line, the D1PRINT & D1PRINTLN lines are defined as blank.
+ //#define MACRO_DEBUG_DETAIL //If you comment this line, the D1PRINT & D1PRINTLN lines are defined as blank.
+#define DEBUG_LEVEL 2
+
+#if DEBUG_LEVEL > 0
+#define DLVARPRINT(level,txt,...) if (DEBUG_LEVEL > level) {Serial.print(txt);Serial.print(__VA_ARGS__);Serial.print(":");};
+#define DLVARPRINTLN(level,txt,...) if (DEBUG_LEVEL > level) {Serial.print(txt);Serial.print(__VA_ARGS__);Serial.println(":");};
+#define DLPRINT(level,...)  if (DEBUG_LEVEL > level) {Serial.print(__VA_ARGS__);};
+#define DLPRINTLN(level,...)if (DEBUG_LEVEL > level) {Serial.println(__VA_ARGS__);};
+#define DLPRINTINFO(level,...)    \
+	   if (DEBUG_LEVEL > level){ \
+		Serial.print(millis());     \
+	   Serial.print(": ");    \
+	   Serial.print(__PRETTY_FUNCTION__); \
+	   Serial.print(' ');      \
+	   Serial.print(__FILE__);     \
+	   Serial.print(':');      \
+	   Serial.print(__LINE__);     \
+	   Serial.print(' ');      \
+	   Serial.println(__VA_ARGS__);};
+#else
+#define DLVARPRINT(level,txt,...)
+#define DLVARPRINTLN(level,txt,...)
+#define DLPRINT(level,...)
+#define DLPRINTLN(level,...)
+#define DLPRINTINFO(level,...)
+#endif
 
 #ifdef MACRO_DEBUG    //Macros are usually in all capital letters.
 #define DPRINT(...)    	Serial.print(__VA_ARGS__)    //DPRINT is a macro, debug print

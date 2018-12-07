@@ -13,18 +13,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ICanBus", "..\libraries\ICa
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WiFi", "C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\libraries\WiFi\WiFi.vcxitems", "{BD3C98A9-7998-43EF-99BD-39B0481D664B}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XpUDP", "..\libraries\XpUDP\XpUDP.vcxitems", "{AFE0CA10-6BF8-4BE1-A0B0-00A24B33D86E}"
+EndProject
 Global
-	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		..\libraries\QList\QList.vcxitems*{100094bc-fb31-4583-829b-81a818e4a657}*SharedItemsImports = 9
-		..\libraries\ICanBus\ICanBus.vcxitems*{20928cf8-31bf-45e9-b1e9-c6d7ae4e002e}*SharedItemsImports = 9
-		C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\libraries\WiFi\WiFi.vcxitems*{2541cdca-c3d2-408a-9881-8f1271f36fed}*SharedItemsImports = 4
-		..\..\..\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\libraries\WiFi\WiFi.vcxitems*{2541cdca-c3d2-408a-9881-8f1271f36fed}*SharedItemsImports = 4
-		..\libraries\esp32_can\esp32_can.vcxitems*{2541cdca-c3d2-408a-9881-8f1271f36fed}*SharedItemsImports = 4
-		..\libraries\ICanBus\ICanBus.vcxitems*{2541cdca-c3d2-408a-9881-8f1271f36fed}*SharedItemsImports = 4
-		..\libraries\QList\QList.vcxitems*{2541cdca-c3d2-408a-9881-8f1271f36fed}*SharedItemsImports = 4
-		..\libraries\esp32_can\esp32_can.vcxitems*{8e062620-504f-4a0b-8215-fd15aad6ad02}*SharedItemsImports = 9
-		C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\libraries\WiFi\WiFi.vcxitems*{bd3c98a9-7998-43ef-99bd-39b0481d664b}*SharedItemsImports = 9
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
 		Release|x86 = Release|x86
