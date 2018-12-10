@@ -14,7 +14,7 @@
 #define NO_DEBUG 0
 #define MACRO_DEBUG  //If you comment this line, the DPRINT & DPRINTLN lines are defined as blank.
  //#define MACRO_DEBUG_DETAIL //If you comment this line, the D1PRINT & D1PRINTLN lines are defined as blank.
-#define DEBUG_LEVEL 2
+#define DEBUG_LEVEL 3
 
 #if DEBUG_LEVEL > 0
 #define DLVARPRINT(level,txt,...) if (DEBUG_LEVEL > level) {Serial.print(txt);Serial.print(__VA_ARGS__);Serial.print(":");};

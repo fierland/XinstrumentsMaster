@@ -11,9 +11,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "QList", "..\libraries\QList
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ICanBus", "..\libraries\ICanBus\ICanBus.vcxitems", "{20928CF8-31BF-45E9-B1E9-C6D7AE4E002E}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WiFi", "C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\libraries\WiFi\WiFi.vcxitems", "{BD3C98A9-7998-43EF-99BD-39B0481D664B}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XpUDP", "..\libraries\XpUDP\XpUDP.vcxitems", "{AFE0CA10-6BF8-4BE1-A0B0-00A24B33D86E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SPI", "C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\libraries\SPI\SPI.vcxitems", "{C1FEC133-D460-48BA-ADE6-1F030F3B40EC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -20,6 +20,21 @@
     <Filter Include="Source Files\_micro-api-readonly\libraries">
       <UniqueIdentifier>{dccb1b85-5451-40d6-b0e9-4e819051e373}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{2ccafc8a-f8fa-47f7-b96f-ee759bacfa05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\_micro-api-readonly">
+      <UniqueIdentifier>{26c53f72-14c5-4217-a330-23b89034a6d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\_micro-api-readonly\core">
+      <UniqueIdentifier>{63009caf-9ff7-4178-979d-84c2e5059f8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\_micro-api-readonly\core\libb64">
+      <UniqueIdentifier>{945a4fa4-f85b-4277-baa9-fb2648fca724}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\_micro-api-readonly\libraries">
+      <UniqueIdentifier>{2e232c74-5d63-4c64-951b-78e784d2ca76}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="XinstrumentsMaster.ino" />
@@ -156,6 +171,129 @@
     <ClInclude Include="mydebug.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\Arduino.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\base64.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\binary.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\cbuf.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\Client.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\core_version.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\Esp.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\esp32-hal-adc.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\esp32-hal-bt.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\esp32-hal-dac.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\esp32-hal-gpio.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\esp32-hal-i2c.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\esp32-hal-ledc.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\esp32-hal-log.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\esp32-hal-matrix.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\esp32-hal-psram.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\esp32-hal-sigmadelta.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\esp32-hal-spi.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\esp32-hal-timer.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\esp32-hal-touch.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\esp32-hal-uart.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\esp32-hal.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\esp8266-compat.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\HardwareSerial.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\IPAddress.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\IPv6Address.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\MD5Builder.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\pgmspace.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\Print.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\Printable.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\Server.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\stdlib_noniso.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\Stream.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\StreamString.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\Udp.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\WCharacter.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\wiring_private.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\WString.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\libb64\cdecode.h">
+      <Filter>src\_micro-api-readonly\core\libb64</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\libb64\cencode.h">
+      <Filter>src\_micro-api-readonly\core\libb64</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\variants\esp32-evb\pins_arduino.h">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\hardware\espressif\esp32\cores\esp32\base64.cpp">
@@ -197,5 +335,45 @@
     <ClCompile Include="..\hardware\espressif\esp32\cores\esp32\WString.cpp">
       <Filter>Source Files\_micro-api-readonly\core</Filter>
     </ClCompile>
+    <ClCompile Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\base64.cpp">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\cbuf.cpp">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\Esp.cpp">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\HardwareSerial.cpp">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\IPAddress.cpp">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\IPv6Address.cpp">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\main.cpp">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\MD5Builder.cpp">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\Print.cpp">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\Stream.cpp">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\StreamString.cpp">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\WMath.cpp">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\WString.cpp">
+      <Filter>src\_micro-api-readonly\core</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
 </Project>
