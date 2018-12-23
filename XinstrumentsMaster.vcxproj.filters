@@ -21,19 +21,19 @@
       <UniqueIdentifier>{dccb1b85-5451-40d6-b0e9-4e819051e373}</UniqueIdentifier>
     </Filter>
     <Filter Include="src">
-      <UniqueIdentifier>{2ccafc8a-f8fa-47f7-b96f-ee759bacfa05}</UniqueIdentifier>
+      <UniqueIdentifier>{6debc611-9400-4e20-8d8b-9f300330219c}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\_micro-api-readonly">
-      <UniqueIdentifier>{26c53f72-14c5-4217-a330-23b89034a6d6}</UniqueIdentifier>
+      <UniqueIdentifier>{9606fea9-59df-4bbd-bb0d-1937cc24cf28}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\_micro-api-readonly\core">
-      <UniqueIdentifier>{63009caf-9ff7-4178-979d-84c2e5059f8c}</UniqueIdentifier>
+      <UniqueIdentifier>{2a992159-1aa3-4355-9d72-e3000eff7ade}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\_micro-api-readonly\core\libb64">
-      <UniqueIdentifier>{945a4fa4-f85b-4277-baa9-fb2648fca724}</UniqueIdentifier>
+      <UniqueIdentifier>{f2cdfe1a-477d-40b6-af68-bef35b96d70e}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\_micro-api-readonly\libraries">
-      <UniqueIdentifier>{2e232c74-5d63-4c64-951b-78e784d2ca76}</UniqueIdentifier>
+      <UniqueIdentifier>{216c4031-f138-428b-bc2b-d5ec7ba2ce18}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -335,6 +335,7 @@
     <ClCompile Include="..\hardware\espressif\esp32\cores\esp32\WString.cpp">
       <Filter>Source Files\_micro-api-readonly\core</Filter>
     </ClCompile>
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\base64.cpp">
       <Filter>src\_micro-api-readonly\core</Filter>
     </ClCompile>
@@ -374,6 +375,5 @@
     <ClCompile Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\cores\esp32\WString.cpp">
       <Filter>src\_micro-api-readonly\core</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp" />
   </ItemGroup>
 </Project>

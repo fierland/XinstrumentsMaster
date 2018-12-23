@@ -16,7 +16,6 @@
  Author:	Frank
 */
 #undef CONFIG_AUTOSTART_ARDUINO
-#define LOG_LOCAL_LEVEL 5
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -26,7 +25,6 @@
 #include "esp_system.h"
 #include "esp_wifi.h"
 #include "esp_event_loop.h"
-#include "esp_log.h"
 #include "nvs_flash.h"
 
 #include "lwip/err.h"
@@ -41,25 +39,31 @@
 #include "XpUDP.h"
 #include <Can2XPlane.h>
 #include <ICanBus.h>
+#include "GenericDefs.h"
+
+#include "esp_vfs_fat.h"
+#include "driver/sdmmc_host.h"
+#include "driver/sdmmc_defs.h"
+#include "sdmmc_cmd.h"
+
+#include "IniFile.h"
+
+#define LOG_LOCAL_LEVEL LOG_VERBOSE
 
 //#include <WiFi.h>
 //#include <WiFiType.h>
 //#include <WiFiMulti.h>
 //#include <ETH.h>
 
-//const char* ssid = "OnzeStek";
-//const char* password = "MijnLief09";
+char _ssid[32];
+char _password[32];
 #define EXAMPLE_ESP_WIFI_SSID      "OnzeStek"
 #define EXAMPLE_ESP_WIFI_PASS      "MijnLief09"
 #define EXAMPLE_ESP_MAXIMUM_RETRY  100
 
-/* FreeRTOS event group to signal when we are connected*/
-static EventGroupHandle_t s_wifi_event_group;
 /* The event group allows multiple bits for each event, but we only care about one event
  * - are we connected to the AP with an IP? */
-const int WIFI_CONNECTED_BIT = BIT0;
-
-bool _WifiIsConnected = false;
+EventGroupHandle_t s_connection_event_group;
 
 static const char *TAG = "InstrumentMaster";
 
@@ -77,7 +81,7 @@ long timerVal = DEB_TM_STEP; // testonly;
 QueueHandle_t xQueueRREF = NULL;
 QueueHandle_t xQueueDREF = NULL;
 QueueHandle_t xQueueDataSet = NULL;
-QueueHandle_t xQueueStatus = NULL;
+//static QueueHandle_t xQueueStatus = NULL;
 
 #if DEBUG_LEVEL > 0
 
@@ -89,17 +93,37 @@ short debugGetState()
 }
 
 #endif
+//-------------------------------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------------------------------
 
+//-------------------------------------------------------------------------------------------------
+// test function for XP interface
+//-------------------------------------------------------------------------------------------------
+extern "C" void XP_testTask(void* parameter)
+{
+	queueDataSetItem dataItem;
+
+	dataItem.interval = 1;
+
+	ESP_LOGD(TAG, "Starting task test");
+
+	for (int i = 200; i < 300; i++)
+	{
+		dataItem.canId = i;
+
+		if (xQueueSendToBack(xQueueDataSet, &dataItem, 10) != pdTRUE)
+			DO_LOGE("\nFailed to add new dataset %d", i);
+		delay(20);
+	}
+
+	ESP_LOGD(TAG, "Task test is done");
+	vTaskDelete(NULL);
+}
 //-------------------------------------------------------------------------------------------------
 // main task wrappers
 //-------------------------------------------------------------------------------------------------
-extern "C" void taskXplane(void* parameter)
-{
-	for (;;)
-	{
-		myXpInterface->dataReader();
-	}
-}
+
 //-------------------------------------------------------------------------------------------------
 extern "C" void taskCanbus(void* parameter)
 {
@@ -110,139 +134,160 @@ extern "C" void taskCanbus(void* parameter)
 }
 
 //-------------------------------------------------------------------------------------------------
-// send changed state XPLane interface to instruments
 //-------------------------------------------------------------------------------------------------
-void XpSendState2Canbus(bool isRunning)
+int initSD()
 {
-	myCANbus->setExternalBusState(isRunning);
+	int result = 0;
+	sdmmc_host_t host = SDMMC_HOST_DEFAULT();
+
+	// To use 1-line SD mode, uncomment the following line:
+	host.flags = SDMMC_HOST_FLAG_1BIT;
+	host.max_freq_khz = SDMMC_FREQ_PROBING;
+	// This initializes the slot without card detect (CD) and write protect (WP) signals.
+// Modify slot_config.gpio_cd and slot_config.gpio_wp if your board has these signals.
+	sdmmc_slot_config_t slot_config = SDMMC_SLOT_CONFIG_DEFAULT();
+
+	// Options for mounting the filesystem.
+	// If format_if_mount_failed is set to true, SD card will be partitioned and formatted
+	// in case when mounting fails.
+	esp_vfs_fat_sdmmc_mount_config_t mount_config = {
+		.format_if_mount_failed = false,
+		.max_files = 5
+	};
+	// Use settings defined above to initialize SD card and mount FAT filesystem.
+	// Note: esp_vfs_fat_sdmmc_mount is an all-in-one convenience function.
+	// Please check its source code and implement error recovery when developing
+	// production applications.
+	sdmmc_card_t* card;
+	esp_err_t ret = esp_vfs_fat_sdmmc_mount("/sdcard", &host, &slot_config, &mount_config, &card);
+	if (ret != ESP_OK)
+	{
+		if (ret == ESP_FAIL)
+		{
+			ESP_LOGE(TAG, "Failed to mount filesystem. If you want the card to be formatted, set format_if_mount_failed = true.");
+		}
+		else
+		{
+			ESP_LOGE(TAG, "Failed to initialize the card (%d). Make sure SD card lines have pull-up resistors in place.", ret);
+		}
+		result = -1;
+	}
+
+	ESP_LOGI(TAG, "SD init ok");
+
+	return result;
 }
 
-//-------------------------------------------------------------------------------------------------
-//  send changed state
-//-------------------------------------------------------------------------------------------------
-int CANASsendChangedControlValue2XP(canbusId_t canId, float value)
+// function to get info from ini file
+int ParseIniFile()
 {
-	DLPRINTINFO(2, "START");
-	myXpInterface->setDataRefValue(canId, value);
-	DLPRINTINFO(2, "STOP");
-	return 0;
+	const size_t bufferLen = 160;
+	char buffer[bufferLen];
+	int result = 0;
+	ESP_LOGD(TAG, "start parse ini");
+
+	IniFile ini(INI_FILE_NAME, "rb");
+
+	delay(10);
+
+	if (!ini.open())
+	{
+		ESP_LOGE(TAG, "Ini file does not exist");
+		// Cannot do anything else
+		return -1;
+	}
+
+	ESP_LOGV(TAG, "Inifile opened");
+
+	// Fetch a value from a key which is present
+	if (ini.getValue("network", "ssid", buffer, bufferLen))
+	{
+		ESP_LOGD(TAG, "setting ssid to %s", buffer);
+		strcpy(_ssid, buffer);
+	}
+	else
+	{
+		ESP_LOGE(TAG, "Can not get info from file. Err= %d", ini.getError());
+		result = -1;
+	}
+
+	if (ini.getValue("network", "password", buffer, bufferLen))
+	{
+		ESP_LOGD(TAG, "setting password to %s", buffer);
+		strcpy(_password, buffer);
+	}
+	else
+	{
+		result = -1;
+	}
+
+	uint16_t val;
+	if (ini.getValue("misc", "debug_level", buffer, bufferLen, val))
+	{
+		ESP_LOGD(TAG, "setting loglevel to %d", val);
+		esp_log_level_set("*", (esp_log_level_t)val);
+	};
+
+	ini.close();
+	ESP_LOGD(TAG, "parse ini done");
+
+	return result;
 }
-//-------------------------------------------------------------------------------------------------
-// set changed state of a parameter to CanBus
-//-------------------------------------------------------------------------------------------------
-void XpSendChangedParam2Canbus(uint16_t canId, float val)
-{
-	int service_code = 0;
-
-	DLPRINTINFO(2, "START");
-
-	DLVARPRINT(1, "CanID:", canId); DLVARPRINTLN(1, " :value:", val);
-
-	myCANbus->ParamUpdateValue(canId, val);
-
-	DLPRINTINFO(2, "STOP");
-}
-//-------------------------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------------------------
-int CANASrequestNewXitem(uint16_t canID)
-{
-	DLPRINTINFO(2, "START/STOP");
-
-	return myXpInterface->registerDataRef((uint16_t)canID);
-};
-//-------------------------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------------------------
-int CANASremoveXitem(uint16_t canID)
-{
-	DLPRINTINFO(2, "START");
-
-	return myXpInterface->unRegisterDataRef(canID);
-
-	DLPRINTINFO(2, "STOP");
-};
-
-//-------------------------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------------------------
 
 // the setup function runs once when you press reset or power the board
 void mySetup()
 {
-	IPAddress ipOwn;
+	//IPAddress ipOwn;
 
 	// define all needed inter task queues;
 	xQueueRREF = xQueueCreate(20, sizeof(queueDataItem));
 	assert(xQueueRREF != NULL);
 	xQueueDREF = xQueueCreate(20, sizeof(queueDataItem));
 	assert(xQueueDREF != NULL);
-	xQueueDataSet = xQueueCreate(20, sizeof(queueDataSetItem));
+	xQueueDataSet = xQueueCreate(50, sizeof(queueDataSetItem));
 	assert(xQueueDataSet != NULL);
-	xQueueStatus = xQueueCreate(5, sizeof(uint32_t));
-	assert(xQueueStatus != NULL);
+
+	//xQueueStatus = xQueueCreate(5, sizeof(uint32_t));
+	//assert(xQueueStatus != NULL);
 
 	// setup wifi connection
 		//TODO: Store wifi details in perm memory
 		//TODO: use wifi  autosetup for first connect
 		  // Connect to WiFi network
-	DLPRINTINFO(1, "START");
+	ESP_LOGV(TAG, "START");
 
-	//DLVARPRINTLN(1, "Connecting to:", ssid);
+	ESP_LOGV(TAG, "creating XPlane interface");
 
-	//WiFi.mode(WIFI_STA);
+	myXpInterface = new XpUDP(INI_FILE_NAME);
 
-	//WiFi.printDiag(Serial);
+	ESP_LOGV(TAG, "Creating Can Bus interface");
+	//myCANbus = new ICanBus(XI_Instrument_NodeID, XI_Hardware_Revision, XI_Software_Revision);
+	//assert(myCANbus != NULL);
 
-	/*WiFi.begin(ssid, password);
-
-	wl_status_t wifiResult;
-
-	do
-	{
-		wifiResult = WiFi.status();
-		delay(500);
-		DLPRINT(1, ".");
-		DLVARPRINTLN(2, "wifi status:", wifiResult);
-	} while (wifiResult != WL_CONNECTED);
-
-	DLPRINTLN(1, "<");
-	*/
-
-	// Print the IP address
-	ipOwn = WiFi.localIP();
-	DLVARPRINTLN(1, "WiFi connected:", WiFi.localIP());
-
-	DLPRINTLN(1, "creating XPlane interface");
-	myXpInterface = new XpUDP(XpSendChangedParam2Canbus, XpSendState2Canbus);
-
-	DLPRINTLN(1, "Creating Can Bus interface");
-	myCANbus = new ICanBus(XI_Instrument_NodeID, XI_Hardware_Revision, XI_Software_Revision);
-	assert(myCANbus != NULL);
-
-	DLPRINTLN(1, "starting xp interface");
+	ESP_LOGV(TAG, "starting xp interface");
 	myXpInterface->start();
 
 	// startup the CAN areospace bus
 
-	DLPRINTLN(1, "starting CanAs interface");
+	ESP_LOGV(TAG, "starting CanAs interface");
 	// make sure right can pins for board aree set
-	myCANbus->setCANPins(XI_CANBUS_RX, XI_CANBUS_TX);
-	// as we are master we will listen to serviceRequestdata;
-	myCANbus->ServiceRegister_master(CANASrequestNewXitem, CANASremoveXitem, CANASsendChangedControlValue2XP);
-	myCANbus->start(XI_CANBUS_SPEED);
+	//myCANbus->setCANPins(XI_CANBUS_RX, XI_CANBUS_TX);
+	//myCANbus->start(XI_CANBUS_SPEED);
 
-	DLPRINTLN(1, "starting Tasks");
+	//DLPRINTLN(1, "starting Tasks");
 	// create main tasks
-	xTaskCreatePinnedToCore(taskXplane, "taskXPlane", 1000, NULL, 1, NULL, 0);
-	xTaskCreatePinnedToCore(taskCanbus, "taskCanBus", 1000, NULL, 1, NULL, 1);
+	//xTaskCreatePinnedToCore(taskXplane, "taskXPlane", 1000, NULL, 1, NULL, 0);
+	//xTaskCreatePinnedToCore(taskCanbus, "taskCanBus", 1000, NULL, 1, NULL, 1);
 
 	// run forever :-)
-	DLPRINTLN(1, "Running");
+	ESP_LOGV(TAG, "All Running");
 
 	DLPRINTINFO(2, "STOP");
 }
 //-------------------------------------------------------------------------------------------------
 // Wifi Stuff
 //-------------------------------------------------------------------------------------------------
-static esp_err_t event_handler(void *ctx, system_event_t *event)
+static esp_err_t wifi_event_handler(void *ctx, system_event_t *event)
 {
 	//DLPRINTINFO(1, "START");
 	//ESP_EARLY_LOGI(TAG, "running on core:%d", xPortGetCoreID());
@@ -254,21 +299,18 @@ static esp_err_t event_handler(void *ctx, system_event_t *event)
 		esp_wifi_connect();
 		break;
 	case SYSTEM_EVENT_STA_GOT_IP:
-		_WifiIsConnected = true;
-		ESP_EARLY_LOGI(TAG, "got ip:%s",
-			ip4addr_ntoa(&event->event_info.got_ip.ip_info.ip));
+		ESP_EARLY_LOGI(TAG, "got ip:%s", ip4addr_ntoa(&event->event_info.got_ip.ip_info.ip));
 		s_retry_num = 0;
-		xEventGroupSetBits(s_wifi_event_group, WIFI_CONNECTED_BIT);
+		xEventGroupSetBits(s_connection_event_group, WIFI_CONNECTED_BIT);
 		break;
 	case SYSTEM_EVENT_STA_DISCONNECTED:
 	{
 		if (s_retry_num < EXAMPLE_ESP_MAXIMUM_RETRY)
 		{
 			esp_wifi_connect();
-			xEventGroupClearBits(s_wifi_event_group, WIFI_CONNECTED_BIT);
+			xEventGroupClearBits(s_connection_event_group, WIFI_CONNECTED_BIT);
 			s_retry_num++;
 			ESP_EARLY_LOGI(TAG, "retry to connect to the AP");
-			DLPRINTLN(1, "retry to connect to the AP");
 		}
 		ESP_EARLY_LOGI(TAG, "connect to the AP fail\n");
 		break;
@@ -276,46 +318,43 @@ static esp_err_t event_handler(void *ctx, system_event_t *event)
 	default:
 		break;
 	}
-	//DLPRINTINFO(1, "STOP");
+
 	return ESP_OK;
 }
 
 extern "C" void wifi_init_sta()
 {
-	DLPRINTINFO(1, "START");
-	s_wifi_event_group = xEventGroupCreate();
+	ESP_EARLY_LOGI(TAG, "Starting Wifi");
 
-	esp_task_wdt_init(30, false);
+	ESP_ERROR_CHECK(false);  // TESTING
+
+	s_connection_event_group = xEventGroupCreate();
 
 	tcpip_adapter_init();
-	ESP_ERROR_CHECK(esp_event_loop_init(event_handler, NULL));
 
 	wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
+
 	ESP_ERROR_CHECK(esp_wifi_init(&cfg));
+	ESP_LOGI(TAG, "Wifi init");
+
 	wifi_config_t wifi_config;
-	/*= {
-		.sta = {
-			.ssid = EXAMPLE_ESP_WIFI_SSID,
-			.password = EXAMPLE_ESP_WIFI_PASS
-		},
-	};*/
-
-	strncpy((char*)(wifi_config.sta.ssid), EXAMPLE_ESP_WIFI_SSID, sizeof(EXAMPLE_ESP_WIFI_SSID));
-	strncpy((char*)(wifi_config.sta.password), EXAMPLE_ESP_WIFI_PASS, sizeof(EXAMPLE_ESP_WIFI_PASS));
-
-	DLVARPRINTLN(1, "SSID:", (char*)(wifi_config.sta.ssid));
-	DLVARPRINTLN(1, "PWD:", (char*)(wifi_config.sta.password));
+	strncpy((char*)(wifi_config.sta.ssid), _ssid, sizeof(_ssid));
+	strncpy((char*)(wifi_config.sta.password), _password, sizeof(_password));
+	wifi_config.sta.bssid_set = 0;
 
 	ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
+	ESP_ERROR_CHECK(esp_wifi_set_storage(WIFI_STORAGE_RAM));
 	ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config));
 	ESP_EARLY_LOGI(TAG, "WIFI Start");
+
+	ESP_ERROR_CHECK(esp_event_loop_init(wifi_event_handler, NULL));
+	ESP_EARLY_LOGI(TAG, "Event loop started");
+
 	ESP_ERROR_CHECK(esp_wifi_start());
 
 	ESP_EARLY_LOGI(TAG, "wifi_init_sta finished.");
 	ESP_EARLY_LOGI(TAG, "connect to ap SSID:%s password:%s",
 		EXAMPLE_ESP_WIFI_SSID, EXAMPLE_ESP_WIFI_PASS);
-
-	DLPRINTINFO(1, "STOP");
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -326,41 +365,66 @@ extern "C" void app_main()
 {
 	// start up serial interface
 	Serial.begin(115200);
-	delay(10);
+	Serial.setDebugOutput(true);
 
-	esp_log_level_set("*", ESP_LOG_INFO);        // set all components to ERROR level
-	esp_log_level_set("InstrumentMaster", ESP_LOG_VERBOSE);        // set all components to ERROR level
+	//esp_log_set_vprintf(WriteFormatted);
 
-	ESP_EARLY_LOGI(TAG, "STARTING MAIN");
+	delay(1000); // make sure Serial is initialized
+
+	esp_log_level_set("*", ESP_LOG_VERBOSE);
+	esp_log_level_set("IniFile", ESP_LOG_ERROR);
+
+	esp_task_wdt_init(60, false);
 
 	//Initialize NVS
 	esp_err_t ret = nvs_flash_init();
 	if (ret == ESP_ERR_NVS_NO_FREE_PAGES)
 	{
-		ESP_ERROR_CHECK(nvs_flash_erase());
+		assert(nvs_flash_erase() == ESP_OK);
 		ret = nvs_flash_init();
 	}
+	DO_LOGD("NVS return is %d", ret);
 	ESP_ERROR_CHECK(ret);
-	ESP_EARLY_LOGI(TAG, "NVS Status %d", ret);
+
+	//assert(ret== ESP_ERR_NOT_FOUND);
 
 	//vTaskStartScheduler();
 
+	// get info from inifile on sd card
+
+	assert(initSD() == 0);
+	DO_LOGV("Init SD card done");
+
+	assert(ParseIniFile() == 0);
+	DO_LOGV("Parse INI file done");
+
+	// in ini file parse general log level is set.
+	// set some specific log levels for modules
+	esp_log_level_set("wifi", ESP_LOG_ERROR);						// set all components to ERROR level
+	esp_log_level_set("IniFile", ESP_LOG_ERROR);
+
 	// setup WiFi
-	ESP_EARLY_LOGI(TAG, "ESP_WIFI_MODE_STA");
+	DO_LOGI("ESP_WIFI_MODE_STA");
 
 	wifi_init_sta();
 
-	ESP_EARLY_LOGI(TAG, "Waiting for connect");
-	while (xEventGroupWaitBits(s_wifi_event_group, WIFI_CONNECTED_BIT, pdFALSE, pdFALSE, 100) != WIFI_CONNECTED_BIT);
-	//while (!_WifiIsConnected);
+	DO_LOGI("Waiting for connect");
+	while (xEventGroupWaitBits(s_connection_event_group, WIFI_CONNECTED_BIT, pdFALSE, pdFALSE, 100) != WIFI_CONNECTED_BIT);
+
 	ESP_EARLY_LOGI(TAG, "Got connection");
 
 	ESP_EARLY_LOGI(TAG, "start Setup");
 	mySetup();
+
 	ESP_EARLY_LOGI(TAG, "starting Tasks");
-	// create main tasks
-	xTaskCreatePinnedToCore(taskXplane, "taskXPlane", 1000, NULL, 1, NULL, 0);
-	xTaskCreatePinnedToCore(taskCanbus, "taskCanBus", 1000, NULL, 1, NULL, 1);
+
+	xTaskCreatePinnedToCore(XP_testTask, "XPtest", 10000, NULL, 1, NULL, 1);
+	//xTaskCreatePinnedToCore(taskCanbus, "taskCanBus", 10000, NULL, 1, NULL, 1);
+
 	ESP_EARLY_LOGI(TAG, "Run State entered");
-	//	for (;;) esp_task_wdt_reset();
+
+	for (;;)
+	{
+		esp_task_wdt_reset(); delay(1000);
+	}
 }
