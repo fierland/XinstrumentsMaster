@@ -46,7 +46,7 @@
 #include "driver/sdmmc_defs.h"
 #include "sdmmc_cmd.h"
 
-#include <IniFile.h>
+#include "IniFile.h"
 
 #define LOG_LOCAL_LEVEL LOG_VERBOSE
 
@@ -108,7 +108,7 @@ extern "C" void XP_testTask(void* parameter)
 
 	ESP_LOGD(TAG, "Starting task test");
 
-	for (int i = 200; i < 300; i++)
+	for (int i = 200; i < 220; i++)
 	{
 		dataItem.canId = i;
 
@@ -118,6 +118,7 @@ extern "C" void XP_testTask(void* parameter)
 	}
 
 	ESP_LOGD(TAG, "Task test is done");
+	for (;;);
 	vTaskDelete(NULL);
 }
 //-------------------------------------------------------------------------------------------------
@@ -281,8 +282,6 @@ void mySetup()
 
 	// run forever :-)
 	ESP_LOGV(TAG, "All Running");
-
-	DLPRINTINFO(2, "STOP");
 }
 //-------------------------------------------------------------------------------------------------
 // Wifi Stuff
@@ -402,6 +401,7 @@ extern "C" void app_main()
 	// set some specific log levels for modules
 	esp_log_level_set("wifi", ESP_LOG_ERROR);						// set all components to ERROR level
 	esp_log_level_set("IniFile", ESP_LOG_ERROR);
+	esp_log_level_set("XpPlaneInfo", ESP_LOG_ERROR);
 
 	// setup WiFi
 	DO_LOGI("ESP_WIFI_MODE_STA");
