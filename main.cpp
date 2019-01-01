@@ -373,7 +373,7 @@ extern "C" void app_main()
 	esp_log_level_set("*", ESP_LOG_VERBOSE);
 	esp_log_level_set("IniFile", ESP_LOG_ERROR);
 
-	esp_task_wdt_init(60, false);
+	esp_task_wdt_init(120, false);
 
 	//Initialize NVS
 	esp_err_t ret = nvs_flash_init();

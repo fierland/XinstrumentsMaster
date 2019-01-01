@@ -13,7 +13,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ICanBus", "..\libraries\ICa
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SPI", "C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\libraries\SPI\SPI.vcxitems", "{C1FEC133-D460-48BA-ADE6-1F030F3B40EC}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XpUDP", "..\libraries\XpUDP\XpUDP.vcxitems", "{AFE0CA10-6BF8-4BE1-A0B0-00A24B33D86E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XpUDP", "..\libraries\XpUDP\XpUDP.vcxitems", "{43AE4975-FC49-442A-A21B-495297661556}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IniFile", "..\libraries\IniFile\IniFile.vcxitems", "{33BD59DE-0465-41CE-81B1-0B223C6FE042}"
 EndProject
@@ -26,8 +26,8 @@ Global
 		..\libraries\ICanBus\ICanBus.vcxitems*{2541cdca-c3d2-408a-9881-8f1271f36fed}*SharedItemsImports = 4
 		..\libraries\QList\QList.vcxitems*{2541cdca-c3d2-408a-9881-8f1271f36fed}*SharedItemsImports = 4
 		..\libraries\IniFile\IniFile.vcxitems*{33bd59de-0465-41ce-81b1-0b223c6fe042}*SharedItemsImports = 9
+		..\libraries\XpUDP\XpUDP.vcxitems*{43ae4975-fc49-442a-a21b-495297661556}*SharedItemsImports = 9
 		..\libraries\esp32_can\esp32_can.vcxitems*{8e062620-504f-4a0b-8215-fd15aad6ad02}*SharedItemsImports = 9
-		..\libraries\XpUDP\XpUDP.vcxitems*{afe0ca10-6bf8-4be1-a0b0-00a24b33d86e}*SharedItemsImports = 9
 		C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\libraries\SPI\SPI.vcxitems*{c1fec133-d460-48ba-ade6-1f030f3b40ec}*SharedItemsImports = 9
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
