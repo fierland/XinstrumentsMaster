@@ -34,7 +34,7 @@
 //-------------------------------------------------------------------------------------------------------------------
 
 #ifdef XI_CONTROLER_MAIN
-constexpr uint8_t XI_Hardware_Revision = 0XF1; 
+constexpr uint8_t XI_Hardware_Revision = 0XF1;
 
 #define XI_CANBUS_TX  5
 #define XI_CANBUS_RX 35
@@ -43,7 +43,6 @@ constexpr uint8_t XI_Hardware_Revision = 0XF1;
 #define XI_MAX_SERVO    0
 #define XI_MAX_HAL      0
 #define XI_MAX_RE       0
-
 
 #endif
 
@@ -62,5 +61,3 @@ constexpr uint8_t XI_Instrument_Service_Chan = 100;
 constexpr uint8_t XI_Instrument_Redun_Chan = 0;
 
 #endif
-
-

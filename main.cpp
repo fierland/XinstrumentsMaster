@@ -16,6 +16,10 @@
  Author:	Frank
 */
 #undef CONFIG_AUTOSTART_ARDUINO
+static const char *TAG = "InstrumentMaster";
+#define LOG_LOCAL_LEVEL ESP_LOG_VERBOSE
+
+#include "esp_log.h"
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -35,7 +39,7 @@
 #include <esp32_can.h>
 //#include "GenericDefs.h"
 #include "XinstrumentsMaster.h"
-#include "mydebug.h"
+//#include "mydebug.h"
 #include "XpUDP.h"
 #include <Can2XPlane.h>
 #include <ICanBus.h>
@@ -48,7 +52,12 @@
 
 #include "IniFile.h"
 
-#define LOG_LOCAL_LEVEL LOG_VERBOSE
+//#define UDP_TEST  // test udp interface without canbus
+#define CAN_TEST // testing can part without xplane
+
+#ifdef CAN_TEST
+#include "XpUDPtest.h"
+#endif
 
 //#include <WiFi.h>
 //#include <WiFiType.h>
@@ -57,21 +66,22 @@
 
 char _ssid[32];
 char _password[32];
-#define EXAMPLE_ESP_WIFI_SSID      "OnzeStek"
-#define EXAMPLE_ESP_WIFI_PASS      "MijnLief09"
+//#define EXAMPLE_ESP_WIFI_SSID      "OnzeStek"
+//#define EXAMPLE_ESP_WIFI_PASS      "MijnLief09"
 #define EXAMPLE_ESP_MAXIMUM_RETRY  100
 
 /* The event group allows multiple bits for each event, but we only care about one event
  * - are we connected to the AP with an IP? */
 EventGroupHandle_t s_connection_event_group;
 
-static const char *TAG = "InstrumentMaster";
-
 static int s_retry_num = 0;
 // end wifi
 
 XpUDP *myXpInterface = NULL;
 ICanBus	*myCANbus = NULL;
+#ifdef CAN_TEST
+XpUDPtest *myUPDtest = NULL;
+#endif
 
 #define DEB_TM_STEP 50000 // test only
 long tmLastBeacon = 0;
@@ -100,6 +110,7 @@ short debugGetState()
 //-------------------------------------------------------------------------------------------------
 // test function for XP interface
 //-------------------------------------------------------------------------------------------------
+#ifdef UDP_TEST
 extern "C" void XP_testTask(void* parameter)
 {
 	queueDataSetItem dataItem;
@@ -121,18 +132,10 @@ extern "C" void XP_testTask(void* parameter)
 	for (;;);
 	vTaskDelete(NULL);
 }
+#endif
 //-------------------------------------------------------------------------------------------------
 // main task wrappers
 //-------------------------------------------------------------------------------------------------
-
-//-------------------------------------------------------------------------------------------------
-extern "C" void taskCanbus(void* parameter)
-{
-	for (;;)
-	{
-		myCANbus->UpdateMaster();
-	}
-}
 
 //-------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------
@@ -259,22 +262,31 @@ void mySetup()
 
 	ESP_LOGV(TAG, "creating XPlane interface");
 
+#ifdef CAN_TEST
+	myUPDtest = new XpUDPtest();
+#else
 	myXpInterface = new XpUDP(INI_FILE_NAME);
+#endif
 
 	ESP_LOGV(TAG, "Creating Can Bus interface");
-	//myCANbus = new ICanBus(XI_Instrument_NodeID, XI_Hardware_Revision, XI_Software_Revision);
-	//assert(myCANbus != NULL);
+	myCANbus = new ICanBus(XI_Instrument_NodeID, XI_Hardware_Revision, XI_Software_Revision);
+	assert(myCANbus != NULL);
 
 	ESP_LOGV(TAG, "starting xp interface");
-	myXpInterface->start();
+#ifdef CAN_TEST
+	myUPDtest->start(0);
+#else
+	myXpInterface->start(0);
+#endif
 
 	// startup the CAN areospace bus
-
+#ifndef UDP_TEST
 	ESP_LOGV(TAG, "starting CanAs interface");
 	// make sure right can pins for board aree set
-	//myCANbus->setCANPins(XI_CANBUS_RX, XI_CANBUS_TX);
-	//myCANbus->start(XI_CANBUS_SPEED);
-
+	myCANbus->setCANPins(XI_CANBUS_RX, XI_CANBUS_TX);
+	// start on differnt core as UDP bus so go for core 0
+	myCANbus->start(XI_CANBUS_SPEED, 1);
+#endif
 	//DLPRINTLN(1, "starting Tasks");
 	// create main tasks
 	//xTaskCreatePinnedToCore(taskXplane, "taskXPlane", 1000, NULL, 1, NULL, 0);
@@ -289,7 +301,8 @@ void mySetup()
 static esp_err_t wifi_event_handler(void *ctx, system_event_t *event)
 {
 	//DLPRINTINFO(1, "START");
-	//ESP_EARLY_LOGI(TAG, "running on core:%d", xPortGetCoreID());
+	ESP_EARLY_LOGI(TAG, "running on core:%d", xPortGetCoreID());
+	ESP_LOGI(TAG, "##running on core:%d", xPortGetCoreID());
 	esp_task_wdt_reset();
 
 	switch (event->event_id)
@@ -311,7 +324,7 @@ static esp_err_t wifi_event_handler(void *ctx, system_event_t *event)
 			s_retry_num++;
 			ESP_EARLY_LOGI(TAG, "retry to connect to the AP");
 		}
-		ESP_EARLY_LOGI(TAG, "connect to the AP fail\n");
+		ESP_EARLY_LOGE(TAG, "connect to the AP fail\n");
 		break;
 	}
 	default:
@@ -353,7 +366,7 @@ extern "C" void wifi_init_sta()
 
 	ESP_EARLY_LOGI(TAG, "wifi_init_sta finished.");
 	ESP_EARLY_LOGI(TAG, "connect to ap SSID:%s password:%s",
-		EXAMPLE_ESP_WIFI_SSID, EXAMPLE_ESP_WIFI_PASS);
+		wifi_config.sta.ssid, wifi_config.sta.password);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -364,14 +377,17 @@ extern "C" void app_main()
 {
 	// start up serial interface
 	Serial.begin(115200);
-	Serial.setDebugOutput(true);
-
-	//esp_log_set_vprintf(WriteFormatted);
-
+	//Serial.setDebugOutput(true);
 	delay(1000); // make sure Serial is initialized
 
-	esp_log_level_set("*", ESP_LOG_VERBOSE);
+	ESP_EARLY_LOGE(TAG, "debug level=%d", LOG_LOCAL_LEVEL);
+	//	ESP_EARLY_LOGI(TAG, "Trace to %s", ESP_APPTRACE_DEST_TRAX);
+		//esp_log_set_vprintf(WriteFormatted);
+
+	esp_log_level_set("*", ESP_LOG_DEBUG);
 	esp_log_level_set("IniFile", ESP_LOG_ERROR);
+	esp_log_level_set("ICanBus", ESP_LOG_DEBUG);
+	esp_log_level_set("XpUDPtest", ESP_LOG_ERROR);
 
 	esp_task_wdt_init(120, false);
 
@@ -382,7 +398,7 @@ extern "C" void app_main()
 		assert(nvs_flash_erase() == ESP_OK);
 		ret = nvs_flash_init();
 	}
-	DO_LOGD("NVS return is %d", ret);
+	ESP_EARLY_LOGI(TAG, "NVS return is %d", ret);
 	ESP_ERROR_CHECK(ret);
 
 	//assert(ret== ESP_ERR_NOT_FOUND);
@@ -392,34 +408,36 @@ extern "C" void app_main()
 	// get info from inifile on sd card
 
 	assert(initSD() == 0);
-	DO_LOGV("Init SD card done");
+	ESP_EARLY_LOGI(TAG, "Init SD card done");
 
 	assert(ParseIniFile() == 0);
-	DO_LOGV("Parse INI file done");
+	ESP_LOGV(TAG, "Parse INI file done");
 
 	// in ini file parse general log level is set.
 	// set some specific log levels for modules
 	esp_log_level_set("wifi", ESP_LOG_ERROR);						// set all components to ERROR level
-	esp_log_level_set("IniFile", ESP_LOG_ERROR);
-	esp_log_level_set("XpPlaneInfo", ESP_LOG_ERROR);
+	esp_log_level_set("IniFile", ESP_LOG_INFO);
+	esp_log_level_set("XpPlaneInfo", ESP_LOG_INFO);
 
 	// setup WiFi
-	DO_LOGI("ESP_WIFI_MODE_STA");
+	ESP_EARLY_LOGI(TAG, "ESP_WIFI_MODE_STA");
 
 	wifi_init_sta();
 
-	DO_LOGI("Waiting for connect");
+	ESP_EARLY_LOGI(TAG, "Waiting for connect");
 	while (xEventGroupWaitBits(s_connection_event_group, WIFI_CONNECTED_BIT, pdFALSE, pdFALSE, 100) != WIFI_CONNECTED_BIT);
 
 	ESP_EARLY_LOGI(TAG, "Got connection");
 
 	ESP_EARLY_LOGI(TAG, "start Setup");
+	ESP_LOGI(TAG, "start Setup **");
 	mySetup();
 
 	ESP_EARLY_LOGI(TAG, "starting Tasks");
 
+#ifdef UDP_TEST
 	xTaskCreatePinnedToCore(XP_testTask, "XPtest", 10000, NULL, 1, NULL, 1);
-	//xTaskCreatePinnedToCore(taskCanbus, "taskCanBus", 10000, NULL, 1, NULL, 1);
+#endif
 
 	ESP_EARLY_LOGI(TAG, "Run State entered");
 

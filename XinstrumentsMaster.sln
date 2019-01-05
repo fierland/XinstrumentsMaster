@@ -24,7 +24,9 @@ Global
 		C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\libraries\SPI\SPI.vcxitems*{2541cdca-c3d2-408a-9881-8f1271f36fed}*SharedItemsImports = 4
 		..\libraries\esp32_can\esp32_can.vcxitems*{2541cdca-c3d2-408a-9881-8f1271f36fed}*SharedItemsImports = 4
 		..\libraries\ICanBus\ICanBus.vcxitems*{2541cdca-c3d2-408a-9881-8f1271f36fed}*SharedItemsImports = 4
+		..\libraries\IniFile\IniFile.vcxitems*{2541cdca-c3d2-408a-9881-8f1271f36fed}*SharedItemsImports = 4
 		..\libraries\QList\QList.vcxitems*{2541cdca-c3d2-408a-9881-8f1271f36fed}*SharedItemsImports = 4
+		..\libraries\XpUDP\XpUDP.vcxitems*{2541cdca-c3d2-408a-9881-8f1271f36fed}*SharedItemsImports = 4
 		..\libraries\IniFile\IniFile.vcxitems*{33bd59de-0465-41ce-81b1-0b223c6fe042}*SharedItemsImports = 9
 		..\libraries\XpUDP\XpUDP.vcxitems*{43ae4975-fc49-442a-a21b-495297661556}*SharedItemsImports = 9
 		..\libraries\esp32_can\esp32_can.vcxitems*{8e062620-504f-4a0b-8215-fd15aad6ad02}*SharedItemsImports = 9
