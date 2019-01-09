@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.28010.2048
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XinstrumentsMaster", "XinstrumentsMaster.vcxproj", "{2541CDCA-C3D2-408A-9881-8F1271F36FED}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "esp32_can", "..\libraries\esp32_can\esp32_can.vcxitems", "{8E062620-504F-4A0B-8215-FD15AAD6AD02}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "esp32_can", "..\libraries\esp32_can\esp32_can.vcxitems", "{07C4FDE7-C307-4682-9684-EBC6F69A4EF7}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "QList", "..\libraries\QList\QList.vcxitems", "{100094BC-FB31-4583-829B-81A818E4A657}"
 EndProject
@@ -19,6 +19,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IniFile", "..\libraries\Ini
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		..\libraries\esp32_can\esp32_can.vcxitems*{07c4fde7-c307-4682-9684-ebc6f69a4ef7}*SharedItemsImports = 9
 		..\libraries\QList\QList.vcxitems*{100094bc-fb31-4583-829b-81a818e4a657}*SharedItemsImports = 9
 		..\libraries\ICanBus\ICanBus.vcxitems*{20928cf8-31bf-45e9-b1e9-c6d7ae4e002e}*SharedItemsImports = 9
 		C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\libraries\SPI\SPI.vcxitems*{2541cdca-c3d2-408a-9881-8f1271f36fed}*SharedItemsImports = 4
@@ -29,7 +30,6 @@ Global
 		..\libraries\XpUDP\XpUDP.vcxitems*{2541cdca-c3d2-408a-9881-8f1271f36fed}*SharedItemsImports = 4
 		..\libraries\IniFile\IniFile.vcxitems*{33bd59de-0465-41ce-81b1-0b223c6fe042}*SharedItemsImports = 9
 		..\libraries\XpUDP\XpUDP.vcxitems*{43ae4975-fc49-442a-a21b-495297661556}*SharedItemsImports = 9
-		..\libraries\esp32_can\esp32_can.vcxitems*{8e062620-504f-4a0b-8215-fd15aad6ad02}*SharedItemsImports = 9
 		C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\libraries\SPI\SPI.vcxitems*{c1fec133-d460-48ba-ade6-1f030f3b40ec}*SharedItemsImports = 9
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

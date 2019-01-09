@@ -15,6 +15,8 @@
 #define __ESP32_ESp32__
 #define __ESP32_ESP32__
 #define _DEBUG 1
+#define ICAN_MASTER
+#define ICAN_MASTER
 #define ESP_PLATFORM
 #define HAVE_CONFIG_H
 #define F_CPU 240000000L

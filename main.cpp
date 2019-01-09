@@ -70,6 +70,8 @@ char _password[32];
 //#define EXAMPLE_ESP_WIFI_PASS      "MijnLief09"
 #define EXAMPLE_ESP_MAXIMUM_RETRY  100
 
+#define INI_FILE_NAME "/sdcard/setting.ini"
+
 /* The event group allows multiple bits for each event, but we only care about one event
  * - are we connected to the AP with an IP? */
 EventGroupHandle_t s_connection_event_group;
@@ -264,6 +266,7 @@ void mySetup()
 
 #ifdef CAN_TEST
 	myUPDtest = new XpUDPtest();
+
 #else
 	myXpInterface = new XpUDP(INI_FILE_NAME);
 #endif
@@ -275,6 +278,7 @@ void mySetup()
 	ESP_LOGV(TAG, "starting xp interface");
 #ifdef CAN_TEST
 	myUPDtest->start(0);
+	myCANbus->setExternalBusState(true);
 #else
 	myXpInterface->start(0);
 #endif
@@ -384,9 +388,11 @@ extern "C" void app_main()
 	//	ESP_EARLY_LOGI(TAG, "Trace to %s", ESP_APPTRACE_DEST_TRAX);
 		//esp_log_set_vprintf(WriteFormatted);
 
-	esp_log_level_set("*", ESP_LOG_DEBUG);
+	esp_log_level_set("*", ESP_LOG_INFO);
+	esp_log_level_set("ICanService", ESP_LOG_DEBUG);
 	esp_log_level_set("IniFile", ESP_LOG_ERROR);
-	esp_log_level_set("ICanBus", ESP_LOG_DEBUG);
+	esp_log_level_set("ICanBus", ESP_LOG_INFO);
+	esp_log_level_set("ICanDriver", ESP_LOG_INFO);
 	esp_log_level_set("XpUDPtest", ESP_LOG_ERROR);
 
 	esp_task_wdt_init(120, false);

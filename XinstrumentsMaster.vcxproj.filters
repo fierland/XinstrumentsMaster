@@ -171,9 +171,6 @@
     <ClInclude Include="C:\Users\Frank\AppData\Local\arduino15\packages\esp32\hardware\esp32\1.0.0\variants\esp32-evb\pins_arduino.h">
       <Filter>src\_micro-api-readonly\core</Filter>
     </ClInclude>
-    <ClInclude Include="__vm\.Xinstruments.vsarduino.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
